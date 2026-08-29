@@ -18,16 +18,26 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Bağımlılıkları Yükle
-        working-directory: ./FlameStore-V3
-        run: npm install
-
-      - name: Projeyi Derle (Build)
-        working-directory: ./FlameStore-V3
-        run: npm run build
+      - name: Akıllı Dizin Bulucu ve Derleme
+        run: |
+          # package.json dosyasını repo içinde nerede olursa olsun otomatik bul
+          PKG_DIR=$(find . -name "package.json" -exec dirname {} \; | head -n 1)
+          echo "Bulunan proje dizini: $PKG_DIR"
+          cd "$PKG_DIR"
+          
+          # Eğer kilit dosyası yoksa otomatik oluştur
+          if [ ! -f "package-lock.json" ]; then
+            echo "{}" > package-lock.json
+          fi
+          
+          echo "Bağımlılıklar yükleniyor..."
+          npm install
+          
+          echo "Proje derleniyor..."
+          npm run build
 
       - name: Çıktı Dosyalarını Kaydet (Artifacts)
         uses: actions/upload-artifact@v4
         with:
           name: flamestore-release-dist
-          path: FlameStore-V3/dist/
+          path: '**/dist/'
