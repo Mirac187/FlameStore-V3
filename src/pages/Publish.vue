@@ -65,4 +65,24 @@ export default {
     }
   }
 }
+  <!-- Fiyat Belirleme Alanı (Publish.vue içine eklenecek) -->
+<div class="space-y-2">
+  <label class="text-xs font-bold text-gray-300 flex items-center justify-between">
+    <span>Uygulama Fiyatı (FlameToken)</span>
+    <span class="text-[10px] text-orange-400 font-normal">1 - 1000 FT arası</span>
+  </label>
+  <div class="relative flex items-center">
+    <input 
+      type="number" 
+      min="1" 
+      max="1000" 
+      placeholder="Örn: 500" 
+      class="w-full bg-flame-dark border border-flame-border rounded-xl px-4 py-3 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-orange-500 transition pr-12"
+    >
+    <div class="absolute right-4 flex items-center space-x-1 text-orange-400">
+      <i class="fa-solid fa-fire-flame-curved text-xs"></i>
+    </div>
+  </div>
+</div>
+
 </script>
