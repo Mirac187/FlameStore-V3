@@ -15,6 +15,15 @@ import NotificationsView from '../pages/Notifications.vue'
 import ClansView from '../pages/Clans.vue'
 import WalletView from '../pages/Wallet.vue'
 import SupportView from '../pages/Support.vue'
+import ModerationView from '../pages/Moderation.vue'
+import VoiceChatView from '../pages/VoiceChat.vue'
+import GameRoomsView from '../pages/GameRooms.vue'
+import BannerStoreView from '../pages/BannerStore.vue'
+import BadgesView from '../pages/Badges.vue'
+import TournamentsView from '../pages/Tournaments.vue'
+import DevLogsView from '../pages/DevLogs.vue'
+import GuardReportView from '../pages/GuardReport.vue'
+import ClanChestView from '../pages/ClanChest.vue'
 
 const routes = [
   { path: '/', name: 'Home', component: AppsView },
@@ -33,6 +42,15 @@ const routes = [
   { path: '/clans', name: 'Clans', component: ClansView },
   { path: '/wallet', name: 'Wallet', component: WalletView },
   { path: '/support', name: 'Support', component: SupportView },
+  { path: '/moderation', name: 'Moderation', component: ModerationView },
+  { path: '/voice-chat', name: 'VoiceChat', component: VoiceChatView },
+  { path: '/game-rooms', name: 'GameRooms', component: GameRoomsView },
+  { path: '/banner-store', name: 'BannerStore', component: BannerStoreView },
+  { path: '/badges', name: 'Badges', component: BadgesView },
+  { path: '/tournaments', name: 'Tournaments', component: TournamentsView },
+  { path: '/dev-logs', name: 'DevLogs', component: DevLogsView },
+  { path: '/guard-report', name: 'GuardReport', component: GuardReportView },
+  { path: '/clan-chest', name: 'ClanChest', component: ClanChestView },
   { path: '/:pathMatch(.*)*', redirect: '/' }
 ]
 
