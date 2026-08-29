@@ -1,4 +1,4 @@
-name: FlameStore APK Build & Deploy
+name: FlameStore Röntgen & Build
 
 on:
   push:
@@ -8,36 +8,33 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Projeyi Kopyala (Checkout)
         uses: actions/checkout@v4
 
+      - name: Ajan Röntgen - Tüm Dosyaları Listele 🔍
+        run: |
+          echo "--- DEPONUN ANA DİZİN İÇERİĞİ ---"
+          ls -la
+          echo "--- PACKAGE.JSON NEREDE? ---"
+          find . -name "package.json" || echo "HİÇBİR YERDE BULUNAMADI!"
+          
       - name: Node.js Ortamını Kur
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      - name: Akıllı Dizin Bulucu ve Derleme
+      - name: Kurulum ve Derleme
         run: |
-          # package.json dosyasını repo içinde nerede olursa olsun otomatik bul
+          # Bulduğumuz ilk package.json'ın olduğu klasöre gir
           PKG_DIR=$(find . -name "package.json" -exec dirname {} \; | head -n 1)
-          echo "Bulunan proje dizini: $PKG_DIR"
-          cd "$PKG_DIR"
-          
-          # Eğer kilit dosyası yoksa otomatik oluştur
-          if [ ! -f "package-lock.json" ]; then
-            echo "{}" > package-lock.json
+          if [ -z "$PKG_DIR" ]; then
+            echo "KRİTİK HATA: package.json dosyası repoda yok! Lütfen GitHub'a package.json dosyasını yükleyin."
+            exit 1
           fi
           
-          echo "Bağımlılıklar yükleniyor..."
-          npm install
+          echo "Dizin bulundu: $PKG_DIR"
+          cd "$PKG_DIR"
           
-          echo "Proje derleniyor..."
+          npm install
           npm run build
-
-      - name: Çıktı Dosyalarını Kaydet (Artifacts)
-        uses: actions/upload-artifact@v4
-        with:
-          name: flamestore-release-dist
-          path: '**/dist/'
