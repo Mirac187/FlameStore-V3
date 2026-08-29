@@ -18,11 +18,11 @@ jobs:
         with:
           node-version: '20'
 
-      - name: Java (JDK 17) Kur
+      - name: Java (JDK 21) Kur
         uses: actions/setup-java@v4
         with:
           distribution: 'zulu'
-          java-version: '17'
+          java-version: '21'
 
       - name: Bağımlılıkları ve Capacitor Paketlerini Yükle
         run: |
