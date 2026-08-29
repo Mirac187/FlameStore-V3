@@ -1,64 +1,54 @@
 <template>
-  <div class="space-y-6">
-    <!-- Üst Başlık & Özet -->
+  <div class="space-y-6 pb-20">
+    <!-- Üst Bilgi & Fiyat Kartı -->
     <div class="bg-flame-card border border-flame-border rounded-2xl p-6 shadow-xl space-y-4">
-      <div class="flex items-center space-x-4">
-        <div class="w-16 h-16 rounded-2xl bg-gradient-to-tr from-orange-600 to-amber-500 flex items-center justify-center text-white font-black text-xl shadow-lg shadow-orange-600/30">
-          FB
+      <div class="flex items-center justify-between">
+        <div class="flex items-center space-x-3">
+          <div class="w-14 h-14 bg-gradient-to-tr from-orange-600 to-amber-500 rounded-2xl flex items-center justify-center text-white font-black text-xl shadow-lg shadow-orange-600/30">
+            🎮
+          </div>
+          <div>
+            <h1 class="text-base font-black text-white">CyberBlade RPG</h1>
+            <span class="text-[10px] text-gray-400">Aksiyon • Sürüm 1.4</span>
+          </div>
         </div>
-        <div>
-          <h1 class="text-xl font-black text-white">FlameBrowser X</h1>
-          <p class="text-xs text-orange-400 font-bold">Geliştirici: Mavi • Sürüm v2.4.1</p>
-        </div>
-      </div>
-
-      <!-- Güvenlik & Tarama Durumu (Görseldeki Özellik) -->
-      <div class="flex items-center justify-between bg-flame-dark border border-emerald-500/30 rounded-xl p-3 text-xs">
-        <div class="flex items-center space-x-2 text-emerald-400 font-bold">
-          <i class="fa-solid fa-shield-check"></i>
-          <span>Alev Guard: %100 Temiz / Virüssüz</span>
-        </div>
-        <span class="text-[10px] text-gray-400">VirusTotal Onaylı</span>
-      </div>
-
-      <!-- İndir Butonu ve İstatistikler -->
-      <div class="grid grid-cols-2 gap-3 pt-2">
-        <div class="bg-flame-dark border border-flame-border rounded-xl p-3 text-center">
-          <span class="text-[10px] text-gray-400">İndirme Sayısı</span>
-          <h4 class="text-sm font-black text-white">1,420</h4>
-        </div>
-        <div class="bg-flame-dark border border-flame-border rounded-xl p-3 text-center">
-          <span class="text-[10px] text-gray-400">Puanlama</span>
-          <h4 class="text-sm font-black text-amber-400">⭐ 4.9</h4>
+        
+        <!-- Fiyat Etiketi (FlameToken) -->
+        <div class="bg-flame-dark border border-orange-500/30 px-3 py-2 rounded-xl text-right">
+          <span class="text-[9px] text-gray-400 block">Değer</span>
+          <div class="flex items-center space-x-1">
+            <span class="text-sm font-black text-orange-400">750</span>
+            <i class="fa-solid fa-fire-flame-curved text-orange-500 text-xs"></i>
+            <span class="text-[10px] text-gray-400">FT</span>
+          </div>
         </div>
       </div>
 
-      <button @click="downloadApp" class="w-full bg-orange-500 text-white font-black text-xs py-3.5 rounded-xl shadow-lg shadow-orange-500/20 hover:bg-orange-600 transition flex items-center justify-center space-x-2">
-        <i class="fa-solid fa-download"></i>
-        <span>APK'yı Güvenli İndir (45 MB)</span>
-      </button>
-    </div>
+      <!-- İndirme / Satın Alma Butonları -->
+      <div class="space-y-2 pt-2">
+        <!-- Normal Kullanıcı / Satın Al Butonu -->
+        <button @click="$emit('notify', 'Mağaza', '750 FlameToken hesabınızdan düşüldü ve indirme başladı!', 'fa-solid fa-download')" class="w-full bg-gradient-to-r from-orange-600 to-amber-500 text-white font-black text-xs py-3.5 rounded-xl shadow-lg shadow-orange-600/30 hover:opacity-95 transition flex items-center justify-center space-x-2">
+          <i class="fa-solid fa-coins"></i>
+          <span>750 FlameToken ile Satın Al & İndir</span>
+        </button>
 
-    <!-- Açıklama ve Özellikler -->
-    <div class="bg-flame-card border border-flame-border rounded-2xl p-6 shadow-xl space-y-3">
-      <h3 class="text-sm font-black text-white flex items-center space-x-2">
-        <i class="fa-solid fa-circle-info text-orange-500"></i>
-        <span>Uygulama Hakkında</span>
-      </h3>
-      <p class="text-xs text-gray-300 leading-relaxed">
-        FlameBrowser X, reklam engelleyici altyapısı, ultra hızlı sekme yönetimi ve karanlık mod optimizasyonuyla mobil deneyiminizi zirveye taşıyan yeni nesil bir tarayıcıdır.
-      </p>
+        <!-- Moderatör / Rehber Özel Ücretsiz İnceleme Butonu -->
+        <div class="bg-orange-500/10 border border-orange-500/30 rounded-xl p-3 flex items-center justify-between">
+          <div class="flex items-center space-x-2">
+            <i class="fa-solid fa-shield-halved text-orange-400 text-xs"></i>
+            <span class="text-[11px] text-orange-300 font-bold">Moderatör / Rehber Hakları</span>
+          </div>
+          <button @click="$emit('notify', 'İnceleme Modu', 'Ücretsiz İnceleme Modu aktif! Dosya analiz için indirildi (Yayınlanamaz).', 'fa-solid fa-eye')" class="px-3 py-1.5 bg-orange-500 text-white font-bold text-[10px] rounded-lg shadow">
+            Ücretsiz İncele
+          </button>
+        </div>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'AppDetailView',
-  methods: {
-    downloadApp() {
-      this.$emit('notify', 'İndirme Başladı', 'FlameBrowser X APK dosyası indiriliyor...', 'fa-solid fa-download')
-    }
-  }
+  name: 'AppDetailView'
 }
 </script>
