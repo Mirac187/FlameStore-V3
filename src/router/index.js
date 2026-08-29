@@ -14,6 +14,7 @@ import SettingsView from '../pages/Settings.vue'
 import NotificationsView from '../pages/Notifications.vue'
 import ClansView from '../pages/Clans.vue'
 import WalletView from '../pages/Wallet.vue'
+import SupportView from '../pages/Support.vue'
 
 const routes = [
   { path: '/', name: 'Home', component: AppsView },
@@ -31,6 +32,7 @@ const routes = [
   { path: '/notifications', name: 'Notifications', component: NotificationsView },
   { path: '/clans', name: 'Clans', component: ClansView },
   { path: '/wallet', name: 'Wallet', component: WalletView },
+  { path: '/support', name: 'Support', component: SupportView },
   { path: '/:pathMatch(.*)*', redirect: '/' }
 ]
 
