@@ -11,6 +11,8 @@ import AdminView from './pages/Admin.vue'
 import DeveloperView from './pages/Developer.vue'
 import ModerationView from './pages/Moderation.vue'
 import SettingsView from './pages/Settings.vue'
+import AppDetailView from './pages/AppDetail.vue'
+import LeaderboardView from './pages/Leaderboard.vue'
 
 const routes = [
   { path: '/', name: 'Home', component: HomeView },
@@ -24,7 +26,9 @@ const routes = [
   { path: '/admin', name: 'Admin', component: AdminView },
   { path: '/developer', name: 'Developer', component: DeveloperView },
   { path: '/moderation', name: 'Moderation', component: ModerationView },
-  { path: '/settings', name: 'Settings', component: SettingsView }
+  { path: '/settings', name: 'Settings', component: SettingsView },
+  { path: '/app-detail', name: 'AppDetail', component: AppDetailView },
+  { path: '/leaderboard', name: 'Leaderboard', component: LeaderboardView }
 ]
 
 const router = createRouter({
