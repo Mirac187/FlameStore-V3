@@ -1,0 +1,100 @@
+name: FlameStore APK Build
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Depoyu Kopyala
+      uses: actions/checkout@v4
+
+    - name: Java Kur (Java 17)
+      uses: actions/setup-java@v4
+      with:
+        distribution: 'temurin'
+        java-version: '17'
+
+    - name: Node.js Kur
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Bağımlılıkları Yükle ve Capacitor 5 Ekle
+      run: |
+        npm install
+        npm install @capacitor/android@5 --save
+
+    - name: Proje Yapılandırması ve Derleme
+      run: |
+        mkdir -p src/pages src/services
+        
+        # Dosya yerleşim düzeni
+        mv Home.vue src/pages/ 2>/dev/null || true
+        mv Apps.vue src/pages/ 2>/dev/null || true
+        mv Chat.vue src/pages/ 2>/dev/null || true
+        mv Clans.vue src/pages/ 2>/dev/null || true
+        mv Community.vue src/pages/ 2>/dev/null || true
+        mv Developer.vue src/pages/ 2>/dev/null || true
+        mv Inbox.vue src/pages/ 2>/dev/null || true
+        mv Moderation.vue src/pages/ 2>/dev/null || true
+        mv Profile.vue src/pages/ 2>/dev/null || true
+        mv Publish.vue src/pages/ 2>/dev/null || true
+        mv Rules.vue src/pages/ 2>/dev/null || true
+        mv Settings.vue src/pages/ 2>/dev/null || true
+        mv Storage.vue src/pages/ 2>/dev/null || true
+        mv data.js src/services/ 2>/dev/null || true
+        mv App.vue src/ 2>/dev/null || true
+        mv main.js src/ 2>/dev/null || true
+        mv router.js src/ 2>/dev/null || true
+        mv index.js src/ 2>/dev/null || true
+        mv firebase.js src/ 2>/dev/null || true
+        mv style.css src/ 2>/dev/null || true
+        touch src/style.css
+        
+        if [ -f "vite.config.js" ]; then
+          node -e "
+            const fs = require('fs');
+            let content = fs.readFileSync('vite.config.js', 'utf8');
+            if (!content.includes('base:')) {
+              content = content.replace('defineConfig({', \"defineConfig({ base: './',\");
+              fs.writeFileSync('vite.config.js', content);
+            }
+          " || true
+        fi
+
+        if [ -f "src/router.js" ]; then
+          sed -i 's/createWebHistory/createWebHashHistory/g' src/router.js || true
+        fi
+
+        rm -f capacitor.config.ts capacitor.config.js
+
+        cat << 'EOF' > capacitor.config.json
+        {
+          "appId": "com.flamestore.app",
+          "appName": "FlameStore",
+          "webDir": "dist",
+          "bundledWebRuntime": false
+        }
+        EOF
+
+        npm run build
+
+    - name: Capacitor Android Ekle ve Senkronize Et
+      run: |
+        npx cap add android || true
+        npx cap sync android
+
+    - name: APK Derle
+      run: |
+        cd android
+        ./gradlew assembleDebug
+
+    - name: APK Kaydet
+      uses: actions/upload-artifact@v4
+      with:
+        name: FlameStore-APK
+        path: android/app/build/outputs/apk/debug/app-debug.apk
