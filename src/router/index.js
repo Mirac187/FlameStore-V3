@@ -24,6 +24,7 @@ import TournamentsView from '../pages/Tournaments.vue'
 import DevLogsView from '../pages/DevLogs.vue'
 import GuardReportView from '../pages/GuardReport.vue'
 import ClanChestView from '../pages/ClanChest.vue'
+import CloudStorageView from '../pages/CloudStorage.vue'
 
 const routes = [
   { path: '/', name: 'Home', component: AppsView },
@@ -51,6 +52,7 @@ const routes = [
   { path: '/dev-logs', name: 'DevLogs', component: DevLogsView },
   { path: '/guard-report', name: 'GuardReport', component: GuardReportView },
   { path: '/clan-chest', name: 'ClanChest', component: ClanChestView },
+  { path: '/cloud-storage', name: 'CloudStorage', component: CloudStorageView },
   { path: '/:pathMatch(.*)*', redirect: '/' }
 ]
 
