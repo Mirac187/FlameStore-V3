@@ -1,6 +1,6 @@
 <template>
-  <div class="space-y-6 pb-20">
-    <!-- Üst Başlık / Duyuru Odası Bilgisi -->
+  <div class="space-y-6 pb-24">
+    <!-- Üst Duyuru Başlığı -->
     <div class="bg-flame-card border border-flame-border rounded-2xl p-6 shadow-xl space-y-3">
       <div class="flex items-center justify-between">
         <h2 class="text-xl font-black text-white flex items-center space-x-2">
@@ -11,17 +11,17 @@
           Salt Okunur (Sadece Yetkili)
         </span>
       </div>
-      <p class="text-xs text-gray-400">Aşağıdaki renk tuşlarına tıklayarak o oyuna ait özel sesli, metin ve ekran paylaşım odanızı açabilirsiniz.</p>
+      <p class="text-xs text-gray-400">Aşağıdaki renk tuşlarına tıklayarak o oyuna ait özel sesli, metin ve ekran paylaşım odanızı anında açabilirsiniz.</p>
     </div>
 
-    <!-- Aktif Oda & Ekran Paylaşımı Paneli (Oda Açıldığında Görünür) -->
+    <!-- Aktif Oda & Canlı Yayın Stüdyosu (Oda Açıldığında Görünür) -->
     <div v-if="activeRoom" class="bg-flame-card border border-orange-500/50 rounded-2xl p-5 shadow-2xl space-y-4">
       <div class="flex items-center justify-between">
         <div class="flex items-center space-x-2">
           <span class="text-lg">{{ activeRoomEmoji }}</span>
           <div>
             <h3 class="font-black text-sm text-white">{{ activeRoomName }} Odanız</h3>
-            <span class="text-[10px] text-emerald-400 font-bold">● Sesli ve Metin Kanalı Aktif</span>
+            <span class="text-[10px] text-emerald-400 font-bold">● Sesli, Metin ve Yayın Kanalı Aktif</span>
           </div>
         </div>
         <button @click="closeRoom" class="px-3 py-1 bg-red-500/20 text-red-400 font-bold text-[10px] rounded-lg border border-red-500/30 hover:bg-red-500/30 transition">
@@ -29,34 +29,43 @@
         </button>
       </div>
 
-      <!-- Yayın ve Gizlilik (Blur) Alanı -->
-      <div class="bg-flame-dark border border-flame-border rounded-xl p-4 space-y-3">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center space-x-2">
-            <i class="fa-solid fa-desktop text-orange-400 text-xs"></i>
-            <span class="font-bold text-xs text-white">Canlı Ekran Paylaşımı</span>
-          </div>
-          <!-- Yayın Durum Rozeti -->
-          <span v-if="isStreaming" class="px-2.5 py-1 bg-red-500/20 text-red-500 font-black text-[10px] rounded-full border border-red-500/40 animate-pulse flex items-center space-x-1">
+      <!-- Ekran Paylaşımı ve Yayın Alanı -->
+      <div class="relative bg-flame-dark border border-flame-border rounded-xl overflow-hidden aspect-video flex items-center justify-center">
+        <video ref="screenVideo" autoplay playsinline muted class="w-full h-full object-cover" :class="{ 'filter blur-md transition-all duration-300': isBlurred }"></video>
+        
+        <div v-if="!isStreaming" class="absolute inset-0 flex flex-col items-center justify-center space-y-2 bg-flame-dark/90">
+          <i class="fa-solid fa-desktop text-gray-500 text-3xl"></i>
+          <span class="text-xs text-gray-400">Ekran paylaşımı başlatılmadı</span>
+        </div>
+
+        <!-- Yayın Durum Rozeti -->
+        <div v-if="isStreaming" class="absolute top-3 left-3 flex items-center space-x-2">
+          <span class="px-3 py-1 bg-red-500/20 text-red-500 font-black text-[10px] rounded-full border border-red-500/40 animate-pulse flex items-center space-x-1.5">
             <span class="w-2 h-2 rounded-full bg-red-500"></span>
             <span>🔴 Yayın Yapıyor</span>
           </span>
-          <span v-else class="text-[10px] text-gray-400">Yayın Kapalı</span>
-        </div>
-
-        <!-- Alev Privacy Blur Bilgisi -->
-        <div class="flex items-center justify-between bg-flame-card p-3 rounded-xl border border-flame-border text-[11px]">
-          <div class="flex items-center space-x-2 text-gray-300">
+          <span class="bg-black/70 backdrop-blur-md px-3 py-1 rounded-lg border border-white/10 flex items-center space-x-1.5 text-[10px] text-white">
             <i class="fa-solid fa-shield-halved text-orange-400"></i>
-            <span>Alev Privacy Blur (Kredi Kartı / Özel Sekme Koruması)</span>
-          </div>
-          <span class="text-emerald-400 font-bold text-[10px]">Aktif 🛡️</span>
+            <span>Alev Privacy Blur</span>
+          </span>
         </div>
+      </div>
 
-        <!-- Yayın Başlat / Durdur Butonu -->
-        <button @click="toggleStream" :class="isStreaming ? 'bg-red-500/20 text-red-400 border border-red-500/30' : 'bg-gradient-to-r from-orange-600 to-amber-500 text-white shadow-lg shadow-orange-600/30'" class="w-full font-black text-xs py-3 rounded-xl transition flex items-center justify-center space-x-2">
+      <!-- Yayın ve Ses Kontrol Paneli -->
+      <div class="grid grid-cols-3 gap-3 pt-2">
+        <button @click="toggleMic" :class="isMuted ? 'bg-red-500/20 text-red-400 border-red-500/30' : 'bg-flame-dark text-gray-300 border-flame-border'" class="border py-3 rounded-xl font-bold text-xs flex items-center justify-center space-x-2 transition">
+          <i :class="isMuted ? 'fa-solid fa-microphone-slash' : 'fa-solid fa-microphone'"></i>
+          <span>{{ isMuted ? 'Susturuldu' : 'Mikrofon' }}</span>
+        </button>
+
+        <button @click="toggleStream" :class="isStreaming ? 'bg-red-500 text-white shadow-lg shadow-red-500/30' : 'bg-gradient-to-r from-orange-600 to-amber-500 text-white shadow-lg shadow-orange-600/30'" class="py-3 rounded-xl font-black text-xs flex items-center justify-center space-x-2 transition">
           <i :class="isStreaming ? 'fa-solid fa-stop' : 'fa-solid fa-tower-broadcast'"></i>
-          <span>{{ isStreaming ? 'Yayını Durdur' : 'Ekranı Paylaş & Yayın Başlat' }}</span>
+          <span>{{ isStreaming ? 'Yayını Bitir' : 'Ekranı Paylaş' }}</span>
+        </button>
+
+        <button @click="toggleBlur" :class="isBlurred ? 'bg-orange-500/20 text-orange-400 border-orange-500/30' : 'bg-flame-dark text-gray-300 border-flame-border'" class="border py-3 rounded-xl font-bold text-xs flex items-center justify-center space-x-2 transition">
+          <i class="fa-solid fa-eye-slash"></i>
+          <span>{{ isBlurred ? 'Blur Açık' : 'Blur Kapalı' }}</span>
         </button>
       </div>
     </div>
@@ -159,7 +168,10 @@ export default {
       activeRoom: false,
       activeRoomName: '',
       activeRoomEmoji: '',
-      isStreaming: false
+      isStreaming: false,
+      isMuted: false,
+      isBlurred: true,
+      mediaStream: null
     }
   },
   methods: {
@@ -168,20 +180,56 @@ export default {
       this.activeRoomName = gameName
       this.activeRoomEmoji = emoji
       this.isStreaming = false
-      this.$emit('notify', 'Özel Oda Oluşturuldu!', `${emoji} Sana Özel ${gameName} Sesli Sohbet ve Metin Kanalı Açıldı!`, 'fa-solid fa-headset')
+      this.$emit('notify', 'Özel Oda Oluşturuldu!', `${emoji} Sana Özel ${gameName} Sesli Sohbet, Metin Kanalı ve Yayın Stüdyosu Açıldı!`, 'fa-solid fa-headset')
     },
     closeRoom() {
+      this.stopStream()
       this.activeRoom = false
-      this.isStreaming = false
       this.$emit('notify', 'Oda', 'Özel odadan ayrıldınız.', 'fa-solid fa-right-from-bracket')
     },
-    toggleStream() {
-      this.isStreaming = !this.isStreaming
-      if (this.isStreaming) {
-        this.$emit('notify', 'Canlı Yayın', '🔴 Yayın Başlatıldı! Hassas veriler Alev Privacy Blur ile otomatik gizlendi.', 'fa-solid fa-tower-broadcast')
-      } else {
-        this.$emit('notify', 'Canlı Yayın', 'Yayın durduruldu.', 'fa-solid fa-stop')
+    toggleMic() {
+      this.isMuted = !this.isMuted
+      if (this.mediaStream) {
+        this.mediaStream.getAudioTracks().forEach(track => {
+          track.enabled = !this.isMuted
+        })
       }
+      this.$emit('notify', 'Ses Durumu', this.isMuted ? 'Mikrofon kapatıldı.' : 'Mikrofon açıldı.', 'fa-solid fa-microphone')
+    },
+    async toggleStream() {
+      if (!this.isStreaming) {
+        try {
+          this.mediaStream = await navigator.mediaDevices.getDisplayMedia({ video: true, audio: true })
+          if (this.$refs.screenVideo) {
+            this.$refs.screenVideo.srcObject = this.mediaStream
+          }
+          this.isStreaming = true
+          
+          this.mediaStream.getVideoTracks()[0].onended = () => {
+            this.stopStream()
+          }
+          
+          this.$emit('notify', 'Canlı Yayın', '🔴 Yayın başlatıldı! Hassas veriler Alev Privacy Blur ile otomatik korunuyor.', 'fa-solid fa-tower-broadcast')
+        } catch (err) {
+          this.$emit('notify', 'Hata', 'Ekran paylaşımı izni reddedildi.', 'fa-solid fa-triangle-exclamation')
+        }
+      } else {
+        this.stopStream()
+      }
+    },
+    stopStream() {
+      if (this.mediaStream) {
+        this.mediaStream.getTracks().forEach(track => track.stop())
+        this.mediaStream = null
+      }
+      if (this.$refs.screenVideo) {
+        this.$refs.screenVideo.srcObject = null
+      }
+      this.isStreaming = false
+      this.$emit('notify', 'Canlı Yayın', 'Yayın sonlandırıldı.', 'fa-solid fa-stop')
+    },
+    toggleBlur() {
+      this.isBlurred = !this.isBlurred
     }
   }
 }
