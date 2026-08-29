@@ -1,4 +1,4 @@
-name: FlameStore Röntgen & Build
+name: FlameStore Real APK Generator
 
 on:
   push:
@@ -6,35 +6,44 @@ on:
   workflow_dispatch:
 
 jobs:
-  build:
+  build-android-apk:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Projeyi Kopyala (Checkout)
+      - name: Projeyi Kopyala
         uses: actions/checkout@v4
 
-      - name: Ajan Röntgen - Tüm Dosyaları Listele 🔍
-        run: |
-          echo "--- DEPONUN ANA DİZİN İÇERİĞİ ---"
-          ls -la
-          echo "--- PACKAGE.JSON NEREDE? ---"
-          find . -name "package.json" || echo "HİÇBİR YERDE BULUNAMADI!"
-          
-      - name: Node.js Ortamını Kur
+      - name: Node.js Kur
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      - name: Kurulum ve Derleme
+      - name: Java (JDK 17) Kur
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '17'
+
+      - name: Bağımlılıkları ve Capacitor Paketlerini Yükle
         run: |
-          # Bulduğumuz ilk package.json'ın olduğu klasöre gir
-          PKG_DIR=$(find . -name "package.json" -exec dirname {} \; | head -n 1)
-          if [ -z "$PKG_DIR" ]; then
-            echo "KRİTİK HATA: package.json dosyası repoda yok! Lütfen GitHub'a package.json dosyasını yükleyin."
-            exit 1
-          fi
-          
-          echo "Dizin bulundu: $PKG_DIR"
-          cd "$PKG_DIR"
-          
           npm install
+          npm install @capacitor/core @capacitor/cli @capacitor/android
           npm run build
+
+      - name: Capacitor Android Projesini Hazırla
+        run: |
+          npx cap init FlameStore com.flamestore.app --web-dir dist
+          npx cap add android
+          npx cap sync android
+
+      - name: APK Derle (Gradle Assemble)
+        run: |
+          cd android
+          chmod +x gradlew
+          ./gradlew assembleDebug
+
+      - name: Gerçek APK Dosyasını Yükle (Artifacts)
+        uses: actions/upload-artifact@v4
+        with:
+          name: FlameStore-v3-Android-APK
+          path: android/app/build/outputs/apk/debug/app-debug.apk
