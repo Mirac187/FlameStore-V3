@@ -1,0 +1,19 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --flame-dark: #0f0f13;
+  --flame-card: #16161e;
+  --flame-border: #262636;
+}
+
+body {
+  background-color: var(--flame-dark);
+  color: #ffffff;
+}
+
+/* Özel renk sınıfları için kısa yollar */
+.bg-flame-dark { background-color: var(--flame-dark); }
+.bg-flame-card { background-color: var(--flame-card); }
+.border-flame-border { border-color: var(--flame-border); }
