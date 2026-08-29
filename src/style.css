@@ -1,19 +1,25 @@
+/* Google Fonts'tan Cyberpunk ruhuna uygun dijital font */
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --flame-dark: #0f0f13;
-  --flame-card: #16161e;
-  --flame-border: #262636;
-}
-
+/* Cyberpunk Arka Plan Stili */
 body {
-  background-color: var(--flame-dark);
-  color: #ffffff;
+  background-color: #09090b;
+  color: #e0e0e0;
+  /* Siber ağ ızgarası efekti */
+  background-image: 
+    linear-gradient(rgba(0, 255, 204, 0.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0, 255, 204, 0.07) 1px, transparent 1px);
+  background-size: 30px 30px;
+  background-position: center center;
 }
 
-/* Özel renk sınıfları için kısa yollar */
-.bg-flame-dark { background-color: var(--flame-dark); }
-.bg-flame-card { background-color: var(--flame-card); }
-.border-flame-border { border-color: var(--flame-border); }
+/* Tüm butonlara otomatik neon geçişi */
+button {
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all 0.3s ease-in-out;
+}
